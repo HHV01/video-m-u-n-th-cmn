@@ -138,3 +138,14 @@ FFprobe, kiểm thử phần mềm và tệp xuất tồn tại chỉ chứng mi
 Một số bài kiểm thử cần FFmpeg, trình duyệt hoặc kết nối server cục bộ. Kết quả test không chứng nhận nội dung của từng tập.
 
 Không commit/chia sẻ `.env`, token OAuth hoặc `.flow-profile`. Manager mặc định tắt; mở giao diện không đồng nghĩa đã có worker hoặc lịch tự vận hành.
+
+## Nhiều niche
+
+Tập mặc định tiếp tục ở projects/. Tập NovaTech English nằm ở
+niches/english-it/projects/. Xem [cách thêm niche](docs/NICHES.md)
+và [khung sản xuất NovaTech](niches/english-it/README.md).
+
+Chọn bằng --niche, NICHE rồi niche_id trong project.yaml. Cấu hình có niche
+gộp settings.yaml, channel-direction.yaml, niche.yaml rồi settings của tập.
+Danh sách được thay toàn bộ. Dùng python run.py niches list hoặc
+python run.py doctor --niche english-it để kiểm tra cục bộ.

@@ -95,3 +95,8 @@ Chỉ một worker sản xuất; không tự bật lại hàng đợi/brief cũ.
 - Không đủ dữ liệu hiệu suất: ghi chưa đủ dữ liệu; không quy kết nguyên nhân hoặc hứa tăng trưởng.
 
 Không chia sẻ `.env`, token OAuth hoặc profile browser khi bàn giao. Giữ lịch sử xuất bản và bằng chứng kiểm duyệt cần thiết ngay cả khi dọn tài nguyên thử nghiệm.
+
+## Đường dẫn tập theo niche
+
+Tập mặc định dùng projects/. Tập có niche dùng niches/<id>/projects/.
+Xem docs/NICHES.md để chọn --niche và kiểm tra cấu hình cục bộ.
