@@ -303,6 +303,11 @@ def handler(studio):
                 return self.send(file.read_bytes(), content_type='application/json' if path.endswith('.json') else 'text/markdown; charset=utf-8')
             if path == '/':
                 return self.send((STATIC/'index.html').read_bytes(), content_type='text/html; charset=utf-8')
+            if path == '/line-art/':
+                return self.send((STATIC/'line-art'/'index.html').read_bytes(), content_type='text/html; charset=utf-8')
+            if path in ('/line-art/walker.js', '/line-art/ink.js', '/line-art/gait.js', '/line-art/motion.js'):
+                return self.send((STATIC/'line-art'/path.rsplit('/', 1)[-1]).read_bytes(),
+                                 content_type='application/javascript; charset=utf-8')
             if path in ('/app.js', '/style.css'):
                 return self.send((STATIC/path[1:]).read_bytes(), content_type=(
                     'application/javascript; charset=utf-8' if path.endswith('.js') else 'text/css; charset=utf-8'))
