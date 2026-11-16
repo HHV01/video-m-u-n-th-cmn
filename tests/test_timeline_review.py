@@ -11,7 +11,7 @@ from pipeline.timeline_review import inspect
 
 class TimelineReviewTests(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / '.studio')
+        self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.base = Path(self.tmp.name)
         self.project = SimpleNamespace(dir=self.base, settings={'video': {'fps': 30}})

@@ -9,7 +9,7 @@ from pipeline.visual_review import inspect, inspect_references, CRITERIA
 
 class VisualGateTests(unittest.TestCase):
     def test_references_need_actual_viewing_and_two_channels(self):
-        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / '.studio') as tmp:
+        with tempfile.TemporaryDirectory() as tmp:
             p = SimpleNamespace(dir=Path(tmp))
             self.assertFalse(inspect_references(p)[0])
             refs = [{'url': 'https://www.youtube.com/watch?v=example', 'channel': c,
@@ -25,7 +25,7 @@ class VisualGateTests(unittest.TestCase):
             self.assertFalse(inspect_references(p)[0])
 
     def test_missing_stale_and_incomplete_reviews_block(self):
-        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / ".studio") as tmp:
+        with tempfile.TemporaryDirectory() as tmp:
             p = SimpleNamespace(dir=Path(tmp), final=Path(tmp)/'final.mp4')
             p.final.write_bytes(b'video')
             self.assertFalse(inspect(p)[0])
