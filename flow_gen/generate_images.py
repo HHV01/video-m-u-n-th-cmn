@@ -14,6 +14,7 @@ import json
 import math
 from pathlib import Path
 import re
+import os
 import sys
 import time
 from urllib.parse import urlsplit
@@ -494,8 +495,9 @@ def parser():
     ap.add_argument("--fallback-narration", action="store_true")
     ap.add_argument("--login", action="store_true", help="Chỉ đăng nhập thủ công, không gen")
     ap.add_argument("--cdp", help="CDP HTTP localhost, ví dụ http://localhost:9222")
-    ap.add_argument("--out", type=Path, default=Path("out"))
-    ap.add_argument("--profile", type=Path, default=Path.home() / ".flow_gen_profile")
+    ap.add_argument("--niche")
+    ap.add_argument("--out", type=Path)
+    ap.add_argument("--profile", type=Path)
     ap.add_argument("--timeout", type=float, default=120)
     return ap
 
@@ -512,6 +514,16 @@ def main(argv=None):
         if (args.first is not None and args.first < 1) or (args.last is not None and args.last < 1) or (
                 args.first is not None and args.last is not None and args.first > args.last):
             raise FlowError("Khoảng --from/--to không hợp lệ.")
+        if args.niche is not None or os.getenv("NICHE") is not None:
+            sys.path.insert(0, str(REPO / "src"))
+            from pipeline import niches
+            try:
+                args.out, args.profile = niches.flow_gen_paths(niches.select(args.niche), args.out, args.profile)
+            except (ValueError, OSError) as error:
+                raise FlowError(str(error)) from error
+        else:
+            args.out = args.out or Path("out")
+            args.profile = args.profile or Path.home() / ".flow_gen_profile"
         profile = args.profile.expanduser().resolve()
         if profile.is_relative_to(REPO):
             raise FlowError("Profile phải nằm ngoài repo.")

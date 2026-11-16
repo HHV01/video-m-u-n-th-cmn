@@ -34,9 +34,9 @@
 
 ## Quy tắc lưu tệp theo từng tập — chủ repo chốt 03/11/2026
 
-Mọi tập mới phải có đúng một thư mục chính trong repo: `projects/tap-XX-ten-chu-de/` (XX là số tập, tên ngắn không dấu). Không dùng thư mục ngoài repo làm nơi lưu sản phẩm của tập.
+Mỗi tập mới có đúng một thư mục chính trong repo. Tập mặc định nằm ở `projects/tap-XX-ten-chu-de/`. Tập có niche nằm ở `niches/<id>/projects/tap-XX-ten-chu-de/` (XX là số tập, tên ngắn không dấu). Không dùng thư mục ngoài repo làm nơi lưu sản phẩm của tập.
 
-Cấu trúc bắt buộc:
+Cấu trúc bắt buộc dưới thư mục dự án tương ứng:
 
 ```text
 projects/tap-XX-ten-chu-de/

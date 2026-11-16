@@ -70,14 +70,31 @@ def main():
     dedupe.add_argument("scenes", help="JSON cảnh có id và narration/text")
     dedupe.add_argument("--threshold", type=float, default=0.85)
     dedupe.add_argument("--json", action="store_true", dest="as_json")
+    list_cmd = sub.add_parser("niches")
+    list_cmd.add_argument("operation", choices=["list"])
+    for command in ("new", "run", "flow", "doctor", "dedupe", "motion"):
+        sub.choices[command].add_argument("--niche")
     a = ap.parse_args()
+    from pipeline import niches
+    name = getattr(a, "name", None) or getattr(a, "project", None)
+    if name is not None and (not re.fullmatch(r"[\w-]{1,64}", name) or name.startswith("_")):
+        ap.error("Tên dự án không hợp lệ.")
+    try:
+        if a.cmd == "niches":
+            for path in sorted((niches.common.ROOT / "niches").glob("*/niche.yaml")):
+                niches.configuration(path.parent.name)
+                print(path.parent.name)
+            return
+        niche_id = niches.select(getattr(a, "niche", None), name if a.cmd != "new" else None) if hasattr(a, "niche") else None
+    except (ValueError, OSError) as error:
+        ap.error(str(error))
     if a.cmd == "menu":
         from pipeline.launcher import main as menu_main
         menu_main()
         return
     if a.cmd == "doctor":
         from pipeline.doctor import main as doctor_main
-        raise SystemExit(doctor_main(a.project, a.as_json, a.fix))
+        raise SystemExit(doctor_main(a.project, a.as_json, a.fix, niche_id))
     if a.cmd == "motion":
         from pipeline import kenburns
         argv = [a.images, "--out", str(a.out), "--fps", str(a.fps),
@@ -91,8 +108,10 @@ def main():
         if a.as_json:
             argv.append("--json")
         raise SystemExit(dedupe.main(argv))
-    from pipeline.common import PROJECTS, Project, load_env
-    load_env()
+    from pipeline.common import Project, load_env, load_yaml
+    PROJECTS = niches.projects(niche_id)
+    if a.cmd != "new":
+        load_env()
     name = getattr(a, 'name', None) or getattr(a, 'project', None)
     if name is not None:
         if (not re.fullmatch(r'[\w-]{1,64}', name) or name.startswith('_')
@@ -102,7 +121,7 @@ def main():
         from pipeline.flow_cli import run as flow_main
         from pipeline.bridge import BridgeError
         try:
-            flow_main(Project(a.project), a.action, a.timeout, a.scene, a.force)
+            flow_main(Project(a.project, niche_id), a.action, a.timeout, a.scene, a.force)
         except BridgeError as error:
             raise SystemExit(str(error)) from None
         return
@@ -121,11 +140,16 @@ def main():
         dst = PROJECTS / a.name
         if dst.exists():
             raise SystemExit(f"{dst} đã tồn tại")
-        shutil.copytree(PROJECTS / "_template", dst)
-        print(f"Đã tạo {dst}. Sửa project.yaml (chủ đề, nhân vật) rồi: python run.py run {a.name}")
+        shutil.copytree(niches.template(niche_id), dst)
+        if niche_id:
+            import yaml
+            cfg = load_yaml(dst / "project.yaml")
+            cfg["niche_id"] = niche_id
+            (dst / "project.yaml").write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        print(f"Đã tạo {dst}. Sửa project.yaml (chủ đề, nhân vật) rồi: python run.py run {a.name}" + (f" --niche {niche_id}" if niche_id else ""))
         return
 
-    project = Project(a.name)
+    project = Project(a.name, niche_id)
     if a.only == "ping":
         import_module("pipeline.s5_generate").ping(project)
         return

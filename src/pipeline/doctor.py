@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def inspect(project_name=None):
+def inspect(project_name=None, niche_id=None):
     checks = []
     def add(code, status, detail, action=None):
         checks.append(dict(code=code, status=status, detail=detail, action=action))
@@ -30,11 +30,16 @@ def inspect(project_name=None):
     try:
         import yaml
         cfg = yaml.safe_load((ROOT/'config/settings.yaml').read_text(encoding='utf-8')) or {}
+        from . import niches
+        project_root = niches.projects(niche_id)
+        if niche_id:
+            cfg = niches.settings(niche_id)
+            add('niche.configuration', 'pass', f'Cấu hình niche: {niche_id}')
         if project_name:
             if not re.fullmatch(r'[\w-]{1,64}', project_name) or project_name.startswith('_'):
                 raise ValueError('Tên dự án không hợp lệ')
-            path = ROOT/'projects'/project_name
-            if path.is_symlink() or path.resolve().parent != (ROOT/'projects').resolve():
+            path = project_root/project_name
+            if path.is_symlink() or path.resolve().parent != project_root.resolve():
                 raise ValueError('Đường dẫn dự án không hợp lệ')
             project = yaml.safe_load((path/'project.yaml').read_text(encoding='utf-8')) or {}
             # Only Flow configuration is needed here; never inspect credential values.
@@ -43,6 +48,8 @@ def inspect(project_name=None):
             flow.update({k:v for k,v in override.items() if k != 'playwright'})
             flow['playwright'] = {**cfg.get('flow', {}).get('playwright', {}), **override.get('playwright', {})}
             cfg['flow'] = flow
+            if niche_id:
+                cfg = niches.settings(niche_id, project.get('settings'))
             url = project.get('flow_url', '')
             from .flow_playwright import is_flow_url
             add('flow.project_url', 'pass' if url and is_flow_url(url) else 'warn',
@@ -113,11 +120,11 @@ def fix(report, log=None):
     return results
 
 
-def main(project_name=None, as_json=False, do_fix=False):
-    report = inspect(project_name)
+def main(project_name=None, as_json=False, do_fix=False, niche_id=None):
+    report = inspect(project_name, niche_id)
     if do_fix:
         fixed = fix(report)
-        report = inspect(project_name)
+        report = inspect(project_name, niche_id)
         report['fix'] = fixed
         if not as_json:
             for item in fixed:

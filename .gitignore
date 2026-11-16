@@ -17,3 +17,7 @@ out/
 .flow_gen_profile/
 .flow_profile/
 *.env
+
+# Niche production data
+niches/*/projects/*
+!niches/*/projects/.gitkeep

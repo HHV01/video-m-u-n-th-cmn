@@ -49,13 +49,17 @@ def deep_merge(base, over):
 
 
 class Project:
-    def __init__(self, name):
+    def __init__(self, name, niche_id=None, *, resolve_niche=False):
+        from . import niches
         self.name = name
-        self.dir = PROJECTS / name
+        if resolve_niche:
+            niche_id = niches.select(niche_id, name)
+        self.niche_id = niche_id
+        self.dir = niches.projects(niche_id) / name
         if not (self.dir / "project.yaml").exists():
             raise SystemExit(f"Không thấy {self.dir}/project.yaml — chạy: python run.py new {name}")
         self.cfg = load_yaml(self.dir / "project.yaml")
-        self.settings = deep_merge(load_yaml(CONFIG / "settings.yaml"), self.cfg.get("settings"))
+        self.settings = niches.settings(niche_id, self.cfg.get("settings"))
         self.style = load_yaml(CONFIG / "style.yaml")
         self._nested = (self.dir / "kich-ban").is_dir() and (self.dir / "video").is_dir() and (self.dir / "hinh").is_dir()
         self.characters = {}
