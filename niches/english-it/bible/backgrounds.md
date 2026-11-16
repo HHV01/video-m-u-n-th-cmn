@@ -115,6 +115,8 @@ Negative: realistic, photo, 3D render, color, gradient, shading, characters, peo
 
 ### BG-08 · Meta Neutral  _(dùng cho: Intro/outro, giải thích công thức)_
 
+Tối đa 2 bối cảnh câu chuyện. BG-08 dùng cho intro, outro hoặc giải thích và không tính vào giới hạn. Outro luôn dùng BG-08.
+
 **BG-08-A (Minimal)**
 ```text
 minimalist stick figure style background, simple black line art on pure white background, thick uniform 4px stroke weight, no shading, no color, no gradient, flat 2D vector style, clean composition with generous white space (at least 40% empty), no characters, no people, flat perspective, consistent stroke weight, clean vector illustration, abstract neutral background, single horizontal line for floor across bottom third, small plant bottom-left, one floating circle outline top-right, 60% empty white space in center, no furniture, no walls

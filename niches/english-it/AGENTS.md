@@ -77,7 +77,7 @@ Phong cách chung: stick figure tối giản, nét đen đều 4px, nền trắn
 | BG-08 | Meta Neutral | Intro, outro, giải thích công thức, talking head |
 
 Mỗi BG có 2 góc nhìn (ký hiệu `-A` chính, `-B` phụ). Ví dụ `BG-02-A`.
-**Quy tắc:** 1 video dùng tối đa 2 bối cảnh. Outro luôn dùng BG-08.
+**Quy tắc:** Tối đa 2 bối cảnh câu chuyện. BG-08 dùng cho intro, outro hoặc giải thích và không tính vào giới hạn. Outro luôn dùng BG-08.
 
 ---
 
@@ -267,7 +267,7 @@ Mặc định: nhạc nền ≤ −25 dB; typewriter SFX 30%; pop SFX 50%; zoom 
 - [ ] Outro có 3 mẫu câu và CTA
 
 **Thị giác**
-- [ ] Tối đa 3 nhân vật chính, 2 bối cảnh
+- [ ] Tối đa 3 nhân vật chính, 2 bối cảnh câu chuyện (không tính BG-08)
 - [ ] Mỗi nhân vật có đúng phụ kiện bất biến
 - [ ] Biểu cảm khớp lời thoại
 - [ ] Mã BG, prop, icon đúng bảng

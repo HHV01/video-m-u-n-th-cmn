@@ -1,3 +1,30 @@
+## Prompt thumbnail hiện hành
+
+Chừa vùng trống cho chữ ở các vị trí tương ứng. Thêm chữ lúc dựng, tối đa 5 từ. Giữ đen trắng và tối đa 3 nhân vật.
+
+### Vấn đề → Giải pháp
+
+```text
+High-contrast black and white stick figure YouTube thumbnail, clean white background. Confused [CHARACTER A] on the left, confident [CHARACTER B] on the right, with a simple arrow between them. Leave blank space in the center for the headline and along the bottom for the situation. Keep reserved areas empty. No text, letters, numbers, logos or watermarks.
+--seed 88888 --ar 16:9 --style raw --v 6
+```
+
+### So sánh
+
+```text
+High-contrast black and white stick figure YouTube thumbnail, clean white background. Place [CHARACTER A] and [CHARACTER B] on opposite sides. Reserve blank spaces above both figures for role labels, in the center for the comparison label, and along the bottom for the situation. Keep reserved areas empty. No text, letters, numbers, logos or watermarks.
+--seed 88888 --ar 16:9 --style raw --v 6
+```
+
+### Công thức
+
+```text
+High-contrast black and white stick figure YouTube thumbnail, clean white background. Place [CHARACTER] on the left 40%. Reserve a large blank area on the right for the formula and a small blank strip at the bottom for the situation. Put [ICON] beside the blank area. Keep reserved areas empty. No text, letters, numbers, logos or watermarks.
+--seed 88888 --ar 16:9 --style raw --v 6
+```
+
+## Bản gốc
+
 ## 3E. Thumbnail (3 mẫu)
 Tham số: `--seed 88888 --ar 16:9 --style raw --v 6`. Quy tắc: đen trắng, ≤ 3 nhân vật, ≤ 5 từ. Chữ nên thêm lại ở CapCut/Canva cho sắc nét.
 
