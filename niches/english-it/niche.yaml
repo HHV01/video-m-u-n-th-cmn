@@ -1,0 +1,25 @@
+niche_id: english-it
+positioning: 'NovaTech English — tiếng Anh giao tiếp trong công việc phần mềm'
+audience: Người Việt làm IT, trình độ A2–B1
+pillars: [Daily Stand-up, Code Review, Incident Calls, Requirements, Career English]
+narrator:
+  tone: Gần gũi, hài nhẹ, đồng cảm
+  hook: Một vấn đề giao tiếp trong tình huống IT thật
+  humor: Hài nhẹ từ tình huống
+  avoid: Không giảng đạo hoặc chê người học
+visual_direction: Stick figure đen trắng, nét đều 4px, nền trắng. Nhân vật là PNG trong suốt; chữ do trình dựng thêm.
+production: 'Short 9:16 trong 45–60 giây; video dài 16:9 là phụ. Hook → Bối cảnh → Vấn đề → Giải pháp → Làm lại → Bài học. Thoại và chữ tiếng Anh, ghi chú và giải thích tiếng Việt.'
+character_id: [C1, C2, C3, C4, C5, C6, C7]
+setting: Tối đa ba nhân vật chính và hai bối cảnh; outro BG-08.
+evidence: TODO(owner) xác nhận nhịp dựng, chuyển động, màu, font và nhạc từ video tham chiếu.
+success_measure: Đo số liệu thật sau đăng; không cam kết lượt xem hay đăng ký.
+research_gate: TODO(owner) duyệt thông số rút từ video tham chiếu.
+decision_status: Khung cấu hình offline; TODO(owner) chọn voice engine và ID riêng cho từng nhân vật, URL Google Flow và hồ sơ dành cho niche.
+owner_approval: Cấu trúc niche đã được chủ repo xác nhận; tài nguyên sản xuất chờ duyệt.
+voice:
+  provider: null
+render:
+  width: 1080
+  height: 1920
+  fps: 30
+  require_object_motion: true
