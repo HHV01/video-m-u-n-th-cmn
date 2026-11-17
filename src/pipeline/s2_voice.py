@@ -129,7 +129,9 @@ def save_sentence_timing(project, sentences, durations, gaps):
 
 
 def character_segments(project, plan, csv_text):
-    characters = project.settings["voice"]["characters"]
+    settings = project.settings["voice"]
+    narrator_mode = settings.get("mode") == "narrator"
+    characters = settings.get("characters", {})
     if csv_text is None:
         need(plan and plan.get("segments"), "Thiếu voice.csv hoặc kế hoạch thoại theo nhân vật.")
         segments = plan["segments"]
@@ -152,7 +154,8 @@ def character_segments(project, plan, csv_text):
             need(shot > last_shot and last_end <= start < end < float("inf") and speaker and utterance,
                  f"voice.csv dòng {reader.line_num}: kiểm tra shot, mốc và người nói.")
             segment = {"shot": shot, "text": utterance, "speaker": speaker, "voice": voice,
-                       "start": start, "end": end, "pause_after": 0}
+                       "start": start, "end": end, "pause_after": 0,
+                       "type": (row.get("type") or "").strip()}
             if tempo is not None:
                 segment["tempo"] = tempo
             segments.append(segment)
@@ -166,11 +169,13 @@ def character_segments(project, plan, csv_text):
     resolved = []
     for segment in segments:
         speaker = segment.get("speaker")
-        config = characters.get(speaker, {})
-        voice = segment.get("voice") or config.get("voice")
+        config = settings.get("narrator", {}) if narrator_mode else characters.get(speaker, {})
+        voice = config.get("voice") if narrator_mode else segment.get("voice") or config.get("voice")
         need(isinstance(voice, str) and voice.strip() and voice.strip() != "TODO(owner)",
              f"Chưa chọn giọng cho nhân vật {speaker or '(thiếu speaker)'}.")
         tempo = segment.get("tempo", config.get("tempo", 1.0))
+        if narrator_mode:
+            tempo = config.get("quote_tempo", .9) if str(segment.get("type", "")).upper() == "QUOTE" else config.get("tempo", 1.0)
         need(type(tempo) in (int, float) and .9 <= tempo <= 1.1,
              f"Tempo của {speaker} phải từ 0.9 đến 1.1.")
         resolved.append({**segment, "voice": voice.strip(), "tempo": tempo})
@@ -184,7 +189,7 @@ def infer_characters(tts, segments):
         requested = segment["voice"]
         voice = next((vid for label, vid in presets
                       if requested.casefold() in (vid.casefold(), label.casefold())), None)
-        need(voice, f"VieNeu không có giọng '{requested}' cho {segment['speaker']}.")
+        need(voice, f"VieNeu không có giọng '{requested}' cho {segment.get('speaker') or 'narrator'}.")
         groups.setdefault(voice, []).append(index)
     ordered = [None] * len(segments)
     for voice, indices in groups.items():
@@ -203,7 +208,8 @@ def synth_vieneu(project, plan=None, segments=None):
         raise SystemExit("Chưa cài VieNeu-TTS: pip install vieneu   (GPU NVIDIA: xem README của VieNeu-TTS)")
     cfg = project.settings["voice"]["vieneu"]
     sr = SAMPLE_RATES.get(cfg["mode"], 48000)
-    if segments is None and project.settings["voice"].get("characters"):
+    voice_settings = project.settings["voice"]
+    if segments is None and (voice_settings.get("mode") == "narrator" or voice_settings.get("characters")):
         path = project.dir / "kich-ban/voice.csv"
         segments = character_segments(project, plan, path.read_text(encoding="utf-8-sig") if path.is_file() else None)
     sentences = ([s["text"] for s in segments] if segments else
@@ -286,7 +292,8 @@ def run(project, force=False):
               "plan_sha256": digest(plan), "voice_config_sha256": digest(project.settings["voice"])}
     provider = project.settings["voice"]["provider"]
     segments = None
-    if provider == "vieneu" and project.settings["voice"].get("characters"):
+    voice_settings = project.settings["voice"]
+    if provider == "vieneu" and (voice_settings.get("mode") == "narrator" or voice_settings.get("characters")):
         path = project.dir / "kich-ban/voice.csv"
         csv_text = path.read_text(encoding="utf-8-sig") if path.is_file() else None
         segments = character_segments(project, plan, csv_text)

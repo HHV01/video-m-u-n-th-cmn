@@ -18,14 +18,16 @@ decision_status: Khung cấu hình offline; TODO(owner) chọn voice engine và 
 owner_approval: Cấu trúc niche đã được chủ repo xác nhận; tài nguyên sản xuất chờ duyệt.
 voice:
   provider: vieneu
+  mode: narrator
+  narrator: {voice: "Hải Đăng", tempo: 1.0, quote_tempo: 0.9}
   vieneu:
     mode: v3turbo
     voice: Hải Đăng
     gap_seconds: 0.3
   characters:
-    Linh: {voice: "TODO(owner)", tempo: 1.0}
-    Minh: {voice: "TODO(owner)", tempo: 1.0}
-    Mai: {voice: "TODO(owner)", tempo: 1.0}
+    Linh: {voice: "Trúc Ly", tempo: 1.0}
+    Minh: {voice: "Thiện Minh", tempo: 1.0}
+    Mai: {voice: "Mai Anh", tempo: 1.0}
   whisper:
     model: small
     language: en

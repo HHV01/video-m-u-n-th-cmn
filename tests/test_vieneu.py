@@ -93,6 +93,18 @@ class VieneuStep(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "0.9 đến 1.1"):
             s2_voice.character_segments(self.p, plan, None)
 
+    def test_narrator_ignores_character_overrides_and_slows_quotes(self):
+        self.p.settings["voice"].update(mode="narrator", narrator={
+            "voice": "Hải Đăng", "tempo": 1.0, "quote_tempo": .9},
+            characters={"Mai": {"voice": "Mai Anh"}})
+        self.p.script.write_text("First. Second.", encoding="utf-8")
+        csv_text = ("shot,speaker,utterance,start_target,end_target,voice_id,tempo,type\n"
+                    "02,Mai,First.,0,1,Mai Anh,1.1,\n"
+                    "06,Mai,Second.,1,2,Mai Anh,1.0,QUOTE\n")
+        clips = s2_voice.character_segments(self.p, None, csv_text)
+        self.assertEqual([(s["voice"], s["tempo"]) for s in clips],
+                         [("Hải Đăng", 1.0), ("Hải Đăng", .9)])
+
     def test_unknown_preset_fails_before_inference(self):
         with self.assertRaisesRegex(SystemExit, "không có giọng .*Linh"):
             s2_voice.infer_characters(FakeVieneu(),
@@ -149,6 +161,59 @@ class VieneuStep(unittest.TestCase):
         with self.assertRaises(SystemExit):
             s2_voice.run(self.p)
 
+
+    def test_multi_voice_uses_characters_and_csv_speaker(self):
+        class RecordingVieneu(FakeVieneu):
+            calls = []
+            def infer_batch(self, texts, voice=None):
+                RecordingVieneu.calls.append((list(texts), voice))
+                return super().infer_batch(texts, voice=voice)
+        RecordingVieneu.calls = []
+        sys.modules["vieneu"] = types.SimpleNamespace(Vieneu=RecordingVieneu)
+        d = PROJECTS / "_t_vieneu_mv"
+        shutil.rmtree(d, ignore_errors=True)
+        shutil.copytree(PROJECTS / "_template", d)
+        (d / "script.txt").write_text("Cau mot. Cau hai.", encoding="utf-8")
+        (d / "kich-ban").mkdir(exist_ok=True)
+        (d / "kich-ban" / "voice.csv").write_text(
+            "shot,start_target,end_target,speaker,direction,utterance,voice_id,tempo\n"
+            "01,0,1,Linh,note,Cau mot.,,\n"
+            "02,1,2,Minh,note,Cau hai.,,\n",
+            encoding="utf-8")
+        p = Project("_t_vieneu_mv")
+        p.settings["review"]["enabled"] = False
+        p.settings["voice"]["characters"] = {
+            "Linh": {"voice": "Mai Anh", "tempo": 1.0},
+            "Minh": {"voice": "Hải Đăng", "tempo": 1.0},
+        }
+        s2_voice.run(p)
+        voices = [c[1] for c in RecordingVieneu.calls]
+        self.assertIn("Mai Anh", voices)
+        self.assertIn("Hải Đăng", voices)
+        self.assertEqual(len(RecordingVieneu.calls), 2)
+        shutil.rmtree(d, ignore_errors=True)
+        sys.modules.pop("vieneu", None)
+
+    def test_single_voice_backward_compatible(self):
+        class RecordingVieneu(FakeVieneu):
+            calls = []
+            def infer_batch(self, texts, voice=None):
+                RecordingVieneu.calls.append((list(texts), voice))
+                return super().infer_batch(texts, voice=voice)
+        RecordingVieneu.calls = []
+        sys.modules["vieneu"] = types.SimpleNamespace(Vieneu=RecordingVieneu)
+        d = PROJECTS / "_t_vieneu_sv"
+        shutil.rmtree(d, ignore_errors=True)
+        shutil.copytree(PROJECTS / "_template", d)
+        (d / "script.txt").write_text("Cau mot. Cau hai.", encoding="utf-8")
+        p = Project("_t_vieneu_sv")
+        p.settings["review"]["enabled"] = False
+        s2_voice.run(p)
+        voices = [c[1] for c in RecordingVieneu.calls]
+        self.assertEqual(len(set(voices)), 1)
+        self.assertEqual(voices[0], p.settings["voice"]["vieneu"]["voice"])
+        shutil.rmtree(d, ignore_errors=True)
+        sys.modules.pop("vieneu", None)
 
 if __name__ == "__main__":
     unittest.main()
