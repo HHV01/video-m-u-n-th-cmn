@@ -1,0 +1,12 @@
+shot,speaker,characters,pose,held_props,scene_props,remove_props,icons,screen_text,motion,background
+01,Hải Đăng,Linh_Surprised.png,Linh ngạc nhiên (pose theo PNG),,,,,,Lớp Linh nhích rồi dừng,BG-02-A.png
+02,Mai,Minh_CrossedArms.png;Mai_Encouraging.png,Mai động viên; Minh khoanh tay P08,,,,,Daily Stand-up,Lớp Mai hướng vào khung,BG-02-A.png
+03,Linh;Hải Đăng,Linh_Confused.png,Linh bối rối (pose theo PNG),,,,,Phụ đề,Lớp Linh dịch rồi giữ,BG-02-A.png
+04,Hải Đăng,Minh_Frustrated.png,Minh bực (pose theo PNG),,,,,,Lớp Minh hạ nhẹ,BG-02-A.png
+05,Hải Đăng,Mai_Encouraging.png,Mai động viên (pose theo PNG),,FormulaCard.png,,,,Thẻ công thức trượt lên,BG-02-A.png
+06,Hải Đăng;QUOTE,Mai_Point_P06.png,Mai chỉ P06,,FormulaCard.png,,I-01_Warning.png,I'm blocked on [X] because [Y]. I need [Z].,Mai giữ P06; lớp khung highlight dịch giữa X/Y/Z,BG-02-A.png
+07,Hải Đăng,Linh_Breath.png,Linh hít thở (pose theo PNG),,FormulaCard.png,I-01_Warning.png,,Giữ công thức mờ,Lớp Linh nâng/hạ nhẹ theo nhịp thở,BG-02-A.png
+08,QUOTE;Hải Đăng,Linh_Confident_P01.png,Linh tự tin P01,,FormulaCard.png,,I-01_Warning.png;I-03_Done.png,Nhấn ba cụm X/Y/Z theo lời,Thẻ và icon dịch theo cụm,BG-02-A.png
+09,Minh;Hải Đăng,Minh_Phone_P07.png,Minh cầm điện thoại P07,Điện thoại (nằm trong pose P07),,FormulaCard.png;I-01_Warning.png;I-03_Done.png,,Got it.,Lớp Minh cầm điện thoại dịch rồi dừng,BG-02-A.png
+10,Mai;Hải Đăng,Mai_Happy.png,Mai vui (pose theo PNG),,,Điện thoại (nằm trong pose P07),I-03_Done.png,,I-03 dịch vào khung,BG-02-A.png
+11,Hải Đăng,,Outro,,FormulaCard.png,I-03_Done.png,,"Công thức theo ba nhịp, rồi Follow for more",Lớp thẻ công thức dịch vào khung,BG-08-A.png

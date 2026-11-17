@@ -1,0 +1,16 @@
+path,previous_checker,shots
+characters/Linh_Surprised.png,characters/C2-P03-surprised.png,01
+characters/Linh_Confused.png,characters/C2-P03-confused.png,03
+characters/Linh_Breath.png,characters/C2-P03-thinking.png,07
+characters/Linh_Confident_P01.png,characters/C2-P03-confident.png,08
+characters/Minh_CrossedArms.png,characters/C1-P02-unspecified.png,02
+characters/Minh_Frustrated.png,characters/C1-P03-frustrated.png,04
+characters/Minh_Phone_P07.png,characters/C1-P03-neutral.png,09
+characters/Mai_Encouraging.png,characters/C7-P01-calm.png;characters/C7-P01-encouraging.png,02;05
+characters/Mai_Point_P06.png,characters/C7-P06-focused.png,06
+characters/Mai_Happy.png,characters/C7-P02-happy.png,10
+backgrounds/BG-02-A.png,backgrounds/BG-02-A.png,01;02;03;04;05;06;07;08;09;10
+backgrounds/BG-08-A.png,backgrounds/BG-08-A.png,11
+props/FormulaCard.png,props/formula-card.png;props/xyz-cards.png,05;06;07;08;11
+icons/I-01_Warning.png,icons/I-01.png,06;08
+icons/I-03_Done.png,icons/I-03.png,08;10

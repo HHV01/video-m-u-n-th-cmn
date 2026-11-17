@@ -1,0 +1,188 @@
+[
+  {
+    "shot": "06",
+    "file": "segment-02-en.wav",
+    "sha256": "464dcecce71f1bad4a94e72ba9c051f0461a0220590e673da663d8531356a8c1",
+    "ffprobe_seconds": 2.752,
+    "estimated_last_word_end": 2.58,
+    "tail_seconds": 0.172,
+    "shot_offset_seconds": 2.2,
+    "words": [
+      {
+        "word": "I'm",
+        "start": 0.0,
+        "end": 0.42
+      },
+      {
+        "word": "blocked",
+        "start": 0.42,
+        "end": 0.62
+      },
+      {
+        "word": "on",
+        "start": 0.62,
+        "end": 0.82
+      },
+      {
+        "word": "X",
+        "start": 0.82,
+        "end": 1.02
+      },
+      {
+        "word": "because",
+        "start": 1.02,
+        "end": 1.3
+      },
+      {
+        "word": "why?",
+        "start": 1.3,
+        "end": 1.8
+      },
+      {
+        "word": "I",
+        "start": 2.1,
+        "end": 2.18
+      },
+      {
+        "word": "need",
+        "start": 2.18,
+        "end": 2.38
+      },
+      {
+        "word": "Z.",
+        "start": 2.38,
+        "end": 2.58
+      }
+    ],
+    "anchors": [
+      {
+        "word": "X",
+        "start": 0.82,
+        "end": 1.02
+      },
+      {
+        "word": "Z.",
+        "start": 2.38,
+        "end": 2.58
+      }
+    ]
+  },
+  {
+    "shot": "08",
+    "file": "segment-04-en.wav",
+    "sha256": "880fa76c2f0fbeba087dbbe8eda5cbeea0bb80ae915a3adc674be75fb6a6a19b",
+    "ffprobe_seconds": 6.464,
+    "estimated_last_word_end": 6.44,
+    "tail_seconds": 0.024,
+    "shot_offset_seconds": 0,
+    "words": [
+      {
+        "word": "I'm",
+        "start": 0.0,
+        "end": 0.44
+      },
+      {
+        "word": "blocked",
+        "start": 0.44,
+        "end": 0.72
+      },
+      {
+        "word": "on",
+        "start": 0.72,
+        "end": 0.96
+      },
+      {
+        "word": "the",
+        "start": 0.96,
+        "end": 1.1
+      },
+      {
+        "word": "login",
+        "start": 1.1,
+        "end": 1.42
+      },
+      {
+        "word": "API",
+        "start": 1.42,
+        "end": 2.04
+      },
+      {
+        "word": "because",
+        "start": 2.04,
+        "end": 2.72
+      },
+      {
+        "word": "the",
+        "start": 2.72,
+        "end": 2.92
+      },
+      {
+        "word": "staging",
+        "start": 2.92,
+        "end": 3.18
+      },
+      {
+        "word": "server",
+        "start": 3.18,
+        "end": 3.64
+      },
+      {
+        "word": "is",
+        "start": 3.64,
+        "end": 3.92
+      },
+      {
+        "word": "down.",
+        "start": 3.92,
+        "end": 4.28
+      },
+      {
+        "word": "I",
+        "start": 4.82,
+        "end": 4.98
+      },
+      {
+        "word": "need",
+        "start": 4.98,
+        "end": 5.24
+      },
+      {
+        "word": "DevOps",
+        "start": 5.24,
+        "end": 5.78
+      },
+      {
+        "word": "to",
+        "start": 5.78,
+        "end": 5.98
+      },
+      {
+        "word": "check",
+        "start": 5.98,
+        "end": 6.18
+      },
+      {
+        "word": "it.",
+        "start": 6.18,
+        "end": 6.44
+      }
+    ],
+    "anchors": [
+      {
+        "word": "blocked",
+        "start": 0.44,
+        "end": 0.72
+      },
+      {
+        "word": "because",
+        "start": 2.04,
+        "end": 2.72
+      },
+      {
+        "word": "need",
+        "start": 4.98,
+        "end": 5.24
+      }
+    ]
+  }
+]

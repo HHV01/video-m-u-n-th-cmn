@@ -1,0 +1,17 @@
+shot,lang,status,tempo,text
+01,vi,owner,1.0,Hôm qua mình đứng hình ngay giữa buổi daily stand-up.
+02,en,owner,1.0,"Linh, your turn."
+03,en,owner,1.0,I... I have a problem with the API. It doesn't work. I don't know why.
+03,vi,owner,1.0,Mình chỉ nói được có vậy.
+04,vi,owner,1.0,Anh Minh thở dài. Mình chỉ muốn biến mất.
+05,vi,owner,1.0,"Chị Mai bảo: đừng nói lan man, chỉ cần một công thức ba phần."
+06,vi,owner,1.0,"Bị kẹt ở đâu, vì sao, và cần gì."
+06,en,owner,0.9,"I'm blocked on X, because Y. I need Z."
+07,vi,owner,1.0,"Mình hít một hơi, rồi thử lại."
+08,en,owner,0.9,"I'm blocked on the login API, because the staging server is down. I need DevOps to check it."
+08,vi,owner,1.0,"Nghĩa là: mình đang kẹt ở login API, vì server staging đang sập, và mình cần DevOps kiểm tra."
+09,en,owner,1.0,Got it. I'll ping DevOps.
+09,vi,owner,1.0,Anh Minh đã hiểu.
+10,en,owner,1.0,"Great job, Linh!"
+10,vi,owner,1.0,Chị Mai khen mình.
+11,vi,owner,1.0,"Nhớ ba ý nhé: bị kẹt ở đâu, vì sao, và cần gì. Mai mốt họp, cứ thử dùng công thức này."

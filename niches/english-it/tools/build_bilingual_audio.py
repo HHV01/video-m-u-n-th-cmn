@@ -33,22 +33,23 @@ def synthesize(language, manifest, model_dir):
             engine.save(clip, row["output"])
 
 
-def build(project, model_dir):
+def build(project, model_dir, remaining=False):
+    targets = {"01":3,"02":5,"03":6,"04":4,"05":4,"09":4,"10":4,"11":6} if remaining else {"06":8,"07":3,"08":10}
     with (project / "kich-ban" / "bilingual-voice.csv").open(encoding="utf-8-sig", newline="") as stream:
-        rows = [row for row in csv.DictReader(stream) if row["shot"] in {"06", "07", "08"}]
+        rows = [row for row in csv.DictReader(stream) if row["shot"] in targets]
     expected = [("06", "vi"), ("06", "en"), ("07", "vi"), ("08", "en"), ("08", "vi")]
-    if [(r["shot"], r["lang"]) for r in rows] != expected:
+    if not remaining and [(r["shot"], r["lang"]) for r in rows] != expected:
         raise ValueError("Unexpected NT-001 pilot segment order.")
     python_en = model_dir / ".venv/Scripts/python.exe"
     for required in (python_en, model_dir / "model_quantized.onnx", model_dir / "voices-alt.bin"):
         if not required.is_file():
             raise FileNotFoundError(required)
-    output = (project / "video" / "voice-bilingual-06-08").resolve()
+    output = (project / "video" / ("voice-bilingual-remaining" if remaining else "voice-bilingual-06-08")).resolve()
     output.mkdir()
     groups = {"vi": [], "en": []}
     for i, row in enumerate(rows, 1):
         row["tempo"] = float(row["tempo"])
-        if row["tempo"] != (0.9 if row["lang"] == "en" else 1.0):
+        if row["tempo"] != (0.9 if row["lang"] == "en" and row["shot"] in {"06", "08"} else 1.0):
             raise ValueError("Expected approved pilot tempos.")
         row["output"] = str(output / f"segment-{i:02}-{row['lang']}.wav")
         groups[row["lang"]].append(row)
@@ -60,7 +61,7 @@ def build(project, model_dir):
         subprocess.run([str(interpreter), "-B", str(Path(__file__).resolve()), str(project),
                         str(model_dir), "--worker", lang, str(manifest)], check=True, env=env)
     results = []
-    for shot, target in [("06", 8), ("07", 3), ("08", 10)]:
+    for shot, target in targets.items():
         parts = [r["output"] for r in rows if r["shot"] == shot]
         command = ["ffmpeg", "-v", "error", "-n"]
         for path in parts:
@@ -88,11 +89,12 @@ def main():
     parser.add_argument("project", type=Path)
     parser.add_argument("model_dir", type=Path)
     parser.add_argument("--worker", nargs=2, metavar=("LANG", "MANIFEST"))
+    parser.add_argument("--remaining", action="store_true")
     args = parser.parse_args()
     if args.worker:
         synthesize(args.worker[0], Path(args.worker[1]), args.model_dir)
     else:
-        build(args.project, args.model_dir)
+        build(args.project, args.model_dir, args.remaining)
 
 
 if __name__ == "__main__":
