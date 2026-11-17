@@ -17,7 +17,18 @@ research_gate: TODO(owner) duyệt thông số rút từ video tham chiếu.
 decision_status: Khung cấu hình offline; TODO(owner) chọn voice engine và ID riêng cho từng nhân vật, URL Google Flow và hồ sơ dành cho niche.
 owner_approval: Cấu trúc niche đã được chủ repo xác nhận; tài nguyên sản xuất chờ duyệt.
 voice:
-  provider: null
+  provider: vieneu
+  vieneu:
+    mode: v3turbo
+    voice: Hải Đăng
+    gap_seconds: 0.3
+  characters:
+    Linh: {voice: "TODO(owner)", tempo: 1.0}
+    Minh: {voice: "TODO(owner)", tempo: 1.0}
+    Mai: {voice: "TODO(owner)", tempo: 1.0}
+  whisper:
+    model: small
+    language: en
 render:
   width: 1080
   height: 1920

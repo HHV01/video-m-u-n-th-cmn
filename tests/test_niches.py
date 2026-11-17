@@ -56,6 +56,17 @@ class NicheTests(unittest.TestCase):
         self.assertEqual(niches.settings("alpha")["flag"], "shared")
         self.assertEqual(niches.settings("alpha", {"items": ["project"]})["items"], ["project"])
 
+    def test_whisper_language_override_is_scoped_to_english_it(self):
+        repo = Path(__file__).resolve().parents[1]
+        config = self.root / "niches/english-it"
+        config.mkdir()
+        (config / "niche.yaml").write_bytes((repo / "niches/english-it/niche.yaml").read_bytes())
+        (config / "AGENTS.md").touch()
+        (self.root / "config/settings.yaml").write_bytes((repo / "config/settings.yaml").read_bytes())
+        self.assertEqual(niches.settings("english-it")["voice"]["whisper"]["language"], "en")
+        self.assertEqual(niches.settings(None)["voice"]["whisper"]["language"], "vi")
+        self.assertEqual(niches.settings("alpha")["voice"]["whisper"]["language"], "vi")
+
     def test_unknown_niche_id(self):
         (self.root/"projects/existing/project.yaml").write_text("niche_id: missing", encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "Niche không tồn tại"):

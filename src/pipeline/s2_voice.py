@@ -4,6 +4,7 @@ provider "vieneu"  : đọc bằng VieNeu-TTS chạy local (pip install vieneu).
                      biết biên ghép từng clip câu; từng từ bên trong chỉ được nội suy, không phải đo âm vị.
 provider "manual"  : bạn tự đưa script.txt qua voice AI khác, lưu thành voice.mp3; timestamp lấy bằng whisper.
 """
+import csv
 import json
 import hashlib
 import subprocess
@@ -127,7 +128,74 @@ def save_sentence_timing(project, sentences, durations, gaps):
         'scope': 'Concatenated clip boundaries; word times are character-weight interpolation. No listening or phoneme alignment.'})
 
 
-def synth_vieneu(project, plan=None):
+def character_segments(project, plan, csv_text):
+    characters = project.settings["voice"]["characters"]
+    if csv_text is None:
+        need(plan and plan.get("segments"), "Thiếu voice.csv hoặc kế hoạch thoại theo nhân vật.")
+        segments = plan["segments"]
+    else:
+        reader = csv.DictReader(csv_text.splitlines())
+        need({"shot", "speaker", "utterance", "start_target", "end_target"}.issubset(
+            reader.fieldnames or ()), "voice.csv thiếu cột bắt buộc.")
+        segments = []
+        last_shot, last_end = 0, 0.0
+        for row in reader:
+            try:
+                shot = int(row["shot"])
+                start, end = float(row["start_target"]), float(row["end_target"])
+                speaker, utterance = row["speaker"].strip(), row["utterance"].strip()
+                voice = (row.get("voice_id") or "").strip()
+                tempo = (row.get("tempo") or "").strip()
+                tempo = float(tempo) if tempo else None
+            except (ValueError, TypeError, AttributeError):
+                raise SystemExit(f"voice.csv dòng {reader.line_num}: dữ liệu thoại không hợp lệ.")
+            need(shot > last_shot and last_end <= start < end < float("inf") and speaker and utterance,
+                 f"voice.csv dòng {reader.line_num}: kiểm tra shot, mốc và người nói.")
+            segment = {"shot": shot, "text": utterance, "speaker": speaker, "voice": voice,
+                       "start": start, "end": end, "pause_after": 0}
+            if tempo is not None:
+                segment["tempo"] = tempo
+            segments.append(segment)
+            last_shot, last_end = shot, end
+        def words(text):
+            return text.split()
+        approved = (" ".join(segment["text"] for segment in plan["segments"]) if plan
+                    else project.script.read_text(encoding="utf-8"))
+        need(segments and words(approved) == words(" ".join(s["text"] for s in segments)),
+             "Lời trong voice.csv phải khớp kịch bản/kế hoạch thoại hiện hành.")
+    resolved = []
+    for segment in segments:
+        speaker = segment.get("speaker")
+        config = characters.get(speaker, {})
+        voice = segment.get("voice") or config.get("voice")
+        need(isinstance(voice, str) and voice.strip() and voice.strip() != "TODO(owner)",
+             f"Chưa chọn giọng cho nhân vật {speaker or '(thiếu speaker)'}.")
+        tempo = segment.get("tempo", config.get("tempo", 1.0))
+        need(type(tempo) in (int, float) and .9 <= tempo <= 1.1,
+             f"Tempo của {speaker} phải từ 0.9 đến 1.1.")
+        resolved.append({**segment, "voice": voice.strip(), "tempo": tempo})
+    return resolved
+
+
+def infer_characters(tts, segments):
+    presets = preset_pairs(tts)
+    groups = {}
+    for index, segment in enumerate(segments):
+        requested = segment["voice"]
+        voice = next((vid for label, vid in presets
+                      if requested.casefold() in (vid.casefold(), label.casefold())), None)
+        need(voice, f"VieNeu không có giọng '{requested}' cho {segment['speaker']}.")
+        groups.setdefault(voice, []).append(index)
+    ordered = [None] * len(segments)
+    for voice, indices in groups.items():
+        audio = list(tts.infer_batch([segments[i]["text"] for i in indices], voice=voice))
+        need(len(audio) == len(indices), f"VieNeu trả sai số clip cho giọng '{voice}'.")
+        for index, clip in zip(indices, audio):
+            ordered[index] = clip
+    return ordered
+
+
+def synth_vieneu(project, plan=None, segments=None):
     import numpy as np
     try:
         from vieneu import Vieneu
@@ -135,27 +203,46 @@ def synth_vieneu(project, plan=None):
         raise SystemExit("Chưa cài VieNeu-TTS: pip install vieneu   (GPU NVIDIA: xem README của VieNeu-TTS)")
     cfg = project.settings["voice"]["vieneu"]
     sr = SAMPLE_RATES.get(cfg["mode"], 48000)
-    sentences = [s["text"] for s in plan["segments"]] if plan else split_sentences(project.script.read_text(encoding="utf-8"))
+    if segments is None and project.settings["voice"].get("characters"):
+        path = project.dir / "kich-ban/voice.csv"
+        segments = character_segments(project, plan, path.read_text(encoding="utf-8-sig") if path.is_file() else None)
+    sentences = ([s["text"] for s in segments] if segments else
+                 [s["text"] for s in plan["segments"]] if plan else
+                 split_sentences(project.script.read_text(encoding="utf-8")))
     kwargs = {"mode": cfg["mode"]}
     if cfg.get("precision"):
-        kwargs["precision"] = cfg["precision"]           # chỉ có tác dụng khi chạy CPU (ONNX)
+        kwargs["precision"] = cfg["precision"]
     tts = Vieneu(**kwargs)
-    voice = str(cfg.get("voice") or "").strip()
-    if cfg.get("ref_audio"):                              # nhân bản giọng từ clip 3-8 giây
-        ref = Path(cfg["ref_audio"])
-        ref = ref if ref.is_absolute() else project.dir / ref
-        need(ref.exists(), f"Không thấy ref_audio: {ref}")
-        voice = f"{project.name}_voice"
-        tts.add_voice(voice, str(ref))
-    elif not voice:                                       # chưa chọn giọng -> hỏi người dùng
-        voice = choose_voice(tts)
-    print(f"[voice] VieNeu {cfg['mode']} — đang đọc {len(sentences)} câu bằng giọng '{voice}'...")
-    audios = [np.asarray(a, dtype=np.float32).reshape(-1) for a in tts.infer_batch(sentences, voice=voice)]
-    need(len(audios) == len(sentences), "VieNeu trả về số đoạn audio không khớp số câu")
-    if plan:
-        audios = [apply_tempo(audio, sr, segment.get('tempo', 1.0))
-                  for audio, segment in zip(audios, plan['segments'])]
-    gap = [s["pause_after"] for s in plan["segments"]] if plan else [cfg["gap_seconds"]] * len(audios)
+    if segments:
+        raw = infer_characters(tts, segments)
+        audios = [np.asarray(clip, dtype=np.float32).reshape(-1) for clip in raw]
+    else:
+        voice = str(cfg.get("voice") or "").strip()
+        if cfg.get("ref_audio"):                              # nhân bản giọng từ clip 3-8 giây
+            ref = Path(cfg["ref_audio"])
+            ref = ref if ref.is_absolute() else project.dir / ref
+            need(ref.exists(), f"Không thấy ref_audio: {ref}")
+            voice = f"{project.name}_voice"
+            tts.add_voice(voice, str(ref))
+        elif not voice:                                       # chưa chọn giọng -> hỏi người dùng
+            voice = choose_voice(tts)
+        print(f"[voice] VieNeu {cfg['mode']} — đang đọc {len(sentences)} câu bằng giọng '{voice}'...")
+        audios = [np.asarray(a, dtype=np.float32).reshape(-1) for a in tts.infer_batch(sentences, voice=voice)]
+        need(len(audios) == len(sentences), "VieNeu trả về số đoạn audio không khớp số câu")
+    timing_segments = segments or (plan["segments"] if plan else None)
+    if timing_segments:
+        audios = [apply_tempo(audio, sr, segment.get("tempo", 1.0))
+                  for audio, segment in zip(audios, timing_segments)]
+    gap = ([s["pause_after"] for s in timing_segments] if timing_segments
+           else [cfg["gap_seconds"]] * len(audios))
+    if segments and "shot" in segments[0]:
+        for segment, audio in zip(segments, audios):
+            available = segment["end"] - segment["start"]
+            duration = len(audio) / sr
+            if duration > available:
+                print(f"[voice] Shot {segment['shot']:02}: {duration:.2f}s > {available:.2f}s dự kiến. "
+                      "Kéo dài hoặc chia shot ở chỗ ngắt tự nhiên.")
+        gap = [cfg["gap_seconds"]] * len(audios)
     parts = []
     for index, a in enumerate(audios):
         parts.append(a)
@@ -198,8 +285,14 @@ def run(project, force=False):
     source = {"script_sha256": digest(project.script.read_text(encoding="utf-8")),
               "plan_sha256": digest(plan), "voice_config_sha256": digest(project.settings["voice"])}
     provider = project.settings["voice"]["provider"]
+    segments = None
+    if provider == "vieneu" and project.settings["voice"].get("characters"):
+        path = project.dir / "kich-ban/voice.csv"
+        csv_text = path.read_text(encoding="utf-8-sig") if path.is_file() else None
+        segments = character_segments(project, plan, csv_text)
+        source["character_segments_sha256"] = digest(segments)
     if project.voice and project.words.exists() and not force:
-        if plan:
+        if plan or segments:
             try:
                 previous = json.loads((project.dir / "voice.source.json").read_text(encoding="utf-8"))
             except (OSError, ValueError):
@@ -208,7 +301,10 @@ def run(project, force=False):
         print(f"[voice] đã có {project.voice.name} + {project.words.name} — bỏ qua (--force để đọc lại)")
         return
     if provider == "vieneu":
-        synth_vieneu(project, plan)
+        if segments:
+            synth_vieneu(project, plan, segments)
+        else:
+            synth_vieneu(project, plan)
     else:
         need(project.voice, f"Đưa script.txt qua voice AI rồi lưu thành {project.dir}/voice.mp3, sau đó chạy lại.")
         transcribe(project)

@@ -53,6 +53,51 @@ class VieneuStep(unittest.TestCase):
         scenes = s3_scenes.make_scenes(self.p.script.read_text(encoding="utf-8"), words, total, 1, 4)
         self.assertEqual(scenes[-1]["end"], round(total, 3))
 
+    def test_empty_character_map_preserves_legacy_wave(self):
+        s2_voice.run(self.p)
+        expected = self.p.voice.read_bytes()
+        self.p.settings["voice"]["characters"] = {}
+        s2_voice.run(self.p, force=True)
+        self.assertEqual(self.p.voice.read_bytes(), expected)
+
+    def test_csv_groups_voices_and_restores_audio_order(self):
+        calls = []
+        class Grouped(FakeVieneu):
+            def infer_batch(self, texts, voice=None):
+                calls.append((voice, texts))
+                level = 0.1 if voice == "Mai Anh" else 0.2
+                return [np.full(4800, level, dtype=np.float32) for _ in texts]
+
+        sys.modules["vieneu"] = types.SimpleNamespace(Vieneu=Grouped)
+        self.p.script.write_text("First. Second. Third.", encoding="utf-8")
+        (self.p.dir / "kich-ban/voice.csv").write_text(
+            "shot,speaker,utterance,start_target,end_target,voice_id,tempo\n"
+            "02,Mai,First.,0,1,,\n03,Linh,Second.,1,2,Hải Đăng,1.0\n"
+            "05,Mai,Third.,2,3,,\n", encoding="utf-8")
+        cfg = self.p.settings["voice"]
+        cfg["characters"] = {"Mai": {"voice": "Mai Anh"}, "Linh": {"voice": "Mai Anh"}}
+        cfg["vieneu"]["gap_seconds"] = 0
+        s2_voice.run(self.p)
+        self.assertEqual(calls, [("Mai Anh", ["First.", "Third."]), ("Hải Đăng", ["Second."])])
+        with wave.open(str(self.p.voice), "rb") as stream:
+            samples = np.frombuffer(stream.readframes(stream.getnframes()), dtype="<i2")
+        np.testing.assert_array_equal(samples[::4800], [3276, 6553, 3276])
+
+    def test_missing_character_voice_and_invalid_tempo(self):
+        cfg = self.p.settings["voice"]
+        plan = {"segments": [{"speaker": "Linh", "text": "Ready."}]}
+        cfg["characters"] = {"Mai": {"voice": "Mai Anh"}}
+        with self.assertRaisesRegex(SystemExit, "Chưa chọn giọng cho nhân vật Linh"):
+            s2_voice.character_segments(self.p, plan, None)
+        cfg["characters"]["Linh"] = {"voice": "Hải Đăng", "tempo": 1.2}
+        with self.assertRaisesRegex(SystemExit, "0.9 đến 1.1"):
+            s2_voice.character_segments(self.p, plan, None)
+
+    def test_unknown_preset_fails_before_inference(self):
+        with self.assertRaisesRegex(SystemExit, "không có giọng .*Linh"):
+            s2_voice.infer_characters(FakeVieneu(),
+                                     [{"speaker": "Linh", "voice": "Unknown", "text": "Ready."}])
+
     def test_generated_sentence_timing_survives_agent_handoff_gate(self):
         import hashlib
         from pipeline.timeline_review import inspect
