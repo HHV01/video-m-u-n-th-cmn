@@ -1,12 +1,12 @@
-shot,speaker,characters,pose,held_props,scene_props,remove_props,icons,screen_text,motion,background
-01,Hải Đăng,Linh_Surprised.png,Linh ngạc nhiên (pose theo PNG),,,,,,Lớp Linh nhích rồi dừng,BG-02-A.png
-02,Mai,Minh_CrossedArms.png;Mai_Encouraging.png,Mai động viên; Minh khoanh tay P08,,,,,Daily Stand-up,Lớp Mai hướng vào khung,BG-02-A.png
-03,Linh;Hải Đăng,Linh_Confused.png,Linh bối rối (pose theo PNG),,,,,Phụ đề,Lớp Linh dịch rồi giữ,BG-02-A.png
-04,Hải Đăng,Minh_Frustrated.png,Minh bực (pose theo PNG),,,,,,Lớp Minh hạ nhẹ,BG-02-A.png
-05,Hải Đăng,Mai_Encouraging.png,Mai động viên (pose theo PNG),,FormulaCard.png,,,,Thẻ công thức trượt lên,BG-02-A.png
-06,Hải Đăng;QUOTE,Mai_Point_P06.png,Mai chỉ P06,,FormulaCard.png,,I-01_Warning.png,I'm blocked on [X] because [Y]. I need [Z].,Mai giữ P06; lớp khung highlight dịch giữa X/Y/Z,BG-02-A.png
-07,Hải Đăng,Linh_Breath.png,Linh hít thở (pose theo PNG),,FormulaCard.png,I-01_Warning.png,,Giữ công thức mờ,Lớp Linh nâng/hạ nhẹ theo nhịp thở,BG-02-A.png
-08,QUOTE;Hải Đăng,Linh_Confident_P01.png,Linh tự tin P01,,FormulaCard.png,,I-01_Warning.png;I-03_Done.png,Nhấn ba cụm X/Y/Z theo lời,Thẻ và icon dịch theo cụm,BG-02-A.png
-09,Minh;Hải Đăng,Minh_Phone_P07.png,Minh cầm điện thoại P07,Điện thoại (nằm trong pose P07),,FormulaCard.png;I-01_Warning.png;I-03_Done.png,,Got it.,Lớp Minh cầm điện thoại dịch rồi dừng,BG-02-A.png
-10,Mai;Hải Đăng,Mai_Happy.png,Mai vui (pose theo PNG),,,Điện thoại (nằm trong pose P07),I-03_Done.png,,I-03 dịch vào khung,BG-02-A.png
-11,Hải Đăng,,Outro,,FormulaCard.png,I-03_Done.png,,"Công thức theo ba nhịp, rồi Follow for more",Lớp thẻ công thức dịch vào khung,BG-08-A.png
+shot,speaker,characters,pose,held_props,scene_props,remove_props,icons,screen_text,motion,background,cast_plan,pose_gap,reuse_or_new
+01,Hải Đăng,Linh_Surprised.png,Linh ngạc nhiên (pose theo PNG),,,,,,Lớp Linh nhích rồi dừng,BG-02-A.png,Linh; Minh có thể hiện khi cuộc họp đã vào khung,"Minh nghe, chưa có pose phù hợp",Giữ Minh ngoài khung ở hook hoặc đề xuất pose Minh nghe mới nếu muốn thấy Minh.
+02,Mai,Minh_CrossedArms.png;Mai_Encouraging.png,Mai động viên; Minh khoanh tay P08,,,,,Daily Stand-up,Lớp Mai hướng vào khung,BG-02-A.png,Mai; Minh; Linh nghe khi được gọi,"Linh nghe/chú ý, chưa có pose phù hợp",Thêm Linh pose nghe nếu giữ ba người. Không dùng Linh_Confused.png trước lời đáp.
+03,Linh;Hải Đăng,Linh_Confused.png,Linh bối rối (pose theo PNG),,,,,Phụ đề,Lớp Linh dịch rồi giữ,BG-02-A.png,Linh; Minh có thể hiện như người nghe,"Minh nghe, chưa có pose phù hợp",Giữ cận Linh hoặc thêm Minh pose nghe. Không dùng pose bực trước shot phản ứng.
+04,Hải Đăng,Minh_Frustrated.png,Minh bực (pose theo PNG),,,,,,Lớp Minh hạ nhẹ,BG-02-A.png,Minh; Linh phản ứng ngượng,"Linh ngượng, chưa có pose phù hợp",Thêm Linh pose ngượng hoặc chỉ giữ Minh trong khung.
+05,Hải Đăng,Mai_Encouraging.png,Mai động viên (pose theo PNG),,FormulaCard.png,,,,Thẻ công thức trượt lên,BG-02-A.png,Mai; Linh lắng nghe,"Linh nghe, chưa có pose phù hợp","Có thể dùng chung Linh pose nghe đề xuất ở shot 02, sau khi được duyệt."
+06,Hải Đăng;QUOTE,Mai_Point_P06.png,Mai chỉ P06,,FormulaCard.png,,I-01_Warning.png,I'm blocked on [X] because [Y]. I need [Z].,Mai giữ P06; lớp khung highlight dịch giữa X/Y/Z,BG-02-A.png,Mai,,Mai_Point_P06.png đã có trong danh sách.
+07,Hải Đăng,Linh_Breath.png,Linh hít thở (pose theo PNG),,FormulaCard.png,I-01_Warning.png,,Giữ công thức mờ,Lớp Linh nâng/hạ nhẹ theo nhịp thở,BG-02-A.png,Linh; Mai có thể hiện như người quan sát,Mai quan sát chỉ cần nếu giữ hai người trong khung,Giữ Linh riêng. Có thể đề xuất Mai_Encouraging.png nếu nét mặt hợp khi xem PNG.
+08,QUOTE;Hải Đăng,Linh_Confident_P01.png,Linh tự tin P01,,FormulaCard.png,,I-01_Warning.png;I-03_Done.png,Nhấn ba cụm X/Y/Z theo lời,Thẻ và icon dịch theo cụm,BG-02-A.png,Linh; Mai có thể hiện như người nghe,Mai nghe chỉ cần nếu giữ hai người trong khung,Giữ Linh riêng. Đề xuất pose Mai nghe nếu ảnh động viên có cử chỉ đang nói.
+09,Minh;Hải Đăng,Minh_Phone_P07.png,Minh cầm điện thoại P07,Điện thoại (nằm trong pose P07),,FormulaCard.png;I-01_Warning.png;I-03_Done.png,,Got it.,Lớp Minh cầm điện thoại dịch rồi dừng,BG-02-A.png,Minh; Linh phản ứng nhẹ nhõm; Mai tùy bố cục,"Linh nhẹ nhõm, chưa có pose phù hợp; Mai chỉ cần nếu hiện",Thêm Linh pose nhẹ nhõm hoặc chỉ giữ Minh. Không dùng P01 nói cho Linh nghe.
+10,Mai;Hải Đăng,Mai_Happy.png,Mai vui (pose theo PNG),,,Điện thoại (nằm trong pose P07),I-03_Done.png,,I-03 dịch vào khung,BG-02-A.png,Mai; Linh nhận lời khen,"Linh vui/nhẹ nhõm khi nghe, chưa có pose phù hợp",Có thể dùng chung pose Linh nhẹ nhõm đề xuất ở shot 09.
+11,Hải Đăng,,Outro,,FormulaCard.png,I-03_Done.png,,"Công thức theo ba nhịp, rồi Follow for more",Lớp thẻ công thức dịch vào khung,BG-08-A.png,Không có nhân vật trong outro hiện tại,Chỉ cần pose Linh nếu muốn Linh xuất hiện ở outro,"Giữ thẻ công thức trên BG-08-A. Nếu thêm Linh, đề xuất dùng lại pose nhẹ nhõm ở 09–10 sau khi duyệt."

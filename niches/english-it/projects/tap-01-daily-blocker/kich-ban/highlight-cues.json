@@ -1,0 +1,25 @@
+{
+  "shot": "06",
+  "relative_to": "shot_start",
+  "units": "seconds",
+  "editable": true,
+  "verification": "pending_owner_listening",
+  "end_reference": "end_of_english_quote",
+  "windows": [
+    {
+      "label": "X",
+      "start": 3.02,
+      "end": 3.5
+    },
+    {
+      "label": "Y",
+      "start": 3.5,
+      "end": 4.58
+    },
+    {
+      "label": "Z",
+      "start": 4.58,
+      "end": 4.952
+    }
+  ]
+}

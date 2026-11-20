@@ -1,0 +1,18 @@
+{
+ "source_url": "https://www.youtube.com/watch?v=IO9NlaC1yGw",
+ "upstream_commit": "dd95d393c6f74fe2ac14b0239f8826691e5dcb0e",
+ "selected_candidate": {
+  "n": 2,
+  "start": 60.06,
+  "end": 104.8,
+  "peak": 85,
+  "score": 3.23,
+  "why": [
+   "loudness spike",
+   "hype words"
+  ],
+  "text": "I have a halater? Give me that fucking thing. Uh, seriously. Trying to need this. Hey! Oh! Oh! Oh! Oh! Oh! Oh, my god, the bullies are right here, bro. Go ahead. Land it down there in the water. Let's get it there. Something as simple as a bird strike can turn a routine landing into a disaster in GTA 6. Come on. Easy. I said, fuck. You're not easy. I'm not the first person to fail. Not just kill a"
+ },
+ "output": "C:\\Users\\VNTT\\OneDrive - VNTT\\Desktop\\Script-line-art\\projects\\tap-06-gta6-funny\\video\\gta-clip-demo.mp4",
+ "scope": "Local technical preview; captions are unreviewed ASR; rights for publication not verified."
+}

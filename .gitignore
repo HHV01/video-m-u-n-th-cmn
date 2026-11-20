@@ -21,3 +21,5 @@ out/
 # Niche production data
 niches/*/projects/*
 !niches/*/projects/.gitkeep
+
+temp_zip_check/

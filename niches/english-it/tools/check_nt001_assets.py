@@ -47,12 +47,17 @@ def check(project):
                 w, h = image.size
                 if image.format != "PNG":
                     problems.append(f"{name}: expected PNG")
-                if name.startswith("backgrounds/") and (w < 1080 or h < 1920):
-                    problems.append(f"{name}: {w}x{h}; needs 1080x1920 crop coverage at native size")
-                lo, hi = image.convert("RGBA").getchannel("A").getextrema()
-                if hi == 0 or (not name.startswith("backgrounds/") and lo == 255):
-                    problems.append(f"{name}: missing visible pixels or actual overlay transparency")
-                print(f"{name}: {w}x{h}, alpha {lo}–{hi}")
+                if name.startswith("backgrounds/"):
+                    if w < 1080 or h < 1920:
+                        problems.append(f"{name}: {w}x{h}; minimum is 1080x1920")
+                    if w * 16 != h * 9:
+                        problems.append(f"{name}: {w}x{h}; expected aspect ratio 9:16")
+                    print(f"{name}: {w}x{h}")
+                elif name.startswith(("characters/", "props/", "icons/")):
+                    lo, hi = image.convert("RGBA").getchannel("A").getextrema()
+                    if hi == 0 or lo == 255:
+                        problems.append(f"{name}: missing visible pixels or actual overlay transparency")
+                    print(f"{name}: {w}x{h}, alpha {lo}–{hi}")
         except OSError as exc:
             problems.append(f"{name}: unreadable ({exc})")
     return problems
