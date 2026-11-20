@@ -13,7 +13,7 @@ from faster_whisper import WhisperModel
 root = Path.cwd()
 episode = root / "projects/tap-06-gta6-funny"
 os.environ["CLIP_DESK_HOME"] = str(episode / "video")
-sys.path.insert(0, str(root / "tools/gtavi-claudecode/scripts"))
+sys.path.insert(0, str(root / "tools/gtavi-source/scripts"))
 import moments
 import common
 
@@ -41,15 +41,15 @@ best = max(candidate["candidates"], key=lambda item: item["score"])
 print("SELECTED", best, flush=True)
 # Relative paths keep FFmpeg's ASS filter paths portable on Windows.
 relative = job.relative_to(root).as_posix()
-subprocess.run([sys.executable, "tools/gtavi-claudecode/scripts/cut.py", relative,
+subprocess.run([sys.executable, "tools/gtavi-source/scripts/cut.py", relative,
                 "--pick", str(best["n"]), "--layout", "blur", "--hook",
                 "GTA VI | WHAT JUST HAPPENED?!", "--captions", "word"], check=True)
 clip = job / "edits" / f"clip_{best['n']}.mp4"
 result = episode / "video/gta-clip-demo.mp4"
 shutil.copy2(clip, result)
-subprocess.run([sys.executable, "tools/gtavi-claudecode/scripts/check.py", str(result)], check=True)
+subprocess.run([sys.executable, "tools/gtavi-source/scripts/check.py", str(result)], check=True)
 metadata = {"source_url": "https://www.youtube.com/watch?v=IO9NlaC1yGw",
-            "upstream_commit": subprocess.check_output(["git", "-C", "tools/gtavi-claudecode", "rev-parse", "HEAD"], text=True).strip(),
+            "upstream_commit": (root / "tools/gtavi-source/UPSTREAM_COMMIT").read_text().strip(),
             "selected_candidate": best, "output": str(result),
             "scope": "Local technical preview; captions are unreviewed ASR; rights for publication not verified."}
 common.save_json(episode / "kich-ban/source-and-result.json", metadata)
